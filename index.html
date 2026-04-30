@@ -22,8 +22,8 @@ body {
 
 <body class="flex flex-col items-center justify-center min-h-screen px-4">
 
-<!-- BOTON VOLVER -->
-<div class="absolute top-6 left-6 text-white text-sm cursor-pointer opacity-80">
+<!-- VOLVER -->
+<div class="absolute top-6 left-6 text-white text-sm opacity-80">
     ← Volver al inicio
 </div>
 
@@ -35,7 +35,7 @@ body {
     </p>
 </div>
 
-<!-- CARD LOGIN -->
+<!-- CARD -->
 <div class="bg-white/95 backdrop-blur p-8 rounded-2xl shadow-2xl w-full max-w-md">
 
     <!-- ICONO -->
@@ -66,13 +66,15 @@ body {
             id="password"
             type="password"
             placeholder="••••••••"
-            class="w-full p-3 border rounded-xl focus:border-red-800 outline-none"
+            class="w-full p-3 pr-10 border rounded-xl focus:border-red-800 outline-none"
         >
-        <span 
+
+        <button 
+            type="button"
             onclick="togglePassword()" 
-            class="absolute right-3 top-3 cursor-pointer text-gray-500">
+            class="absolute right-3 top-3 z-10 text-gray-500">
             👁
-        </span>
+        </button>
     </div>
 
     <!-- BOTON -->
@@ -83,7 +85,7 @@ body {
     </button>
 
     <!-- OLVIDASTE -->
-    <p class="text-center text-red-700 text-sm mt-4 cursor-pointer">
+    <p class="text-center text-red-700 text-sm mt-4">
         ¿Olvidaste tu contraseña?
     </p>
 
@@ -97,7 +99,7 @@ body {
 
 </div>
 
-<!-- LOGO ABAJO -->
+<!-- LOGO -->
 <div class="mt-6">
     <img src="logo-instituto-ucam-cert.png" class="w-20 mx-auto opacity-90">
 </div>
