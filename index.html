@@ -22,12 +22,10 @@ body {
 
 <body class="flex flex-col items-center justify-center min-h-screen px-4">
 
-<!-- VOLVER -->
 <div class="absolute top-6 left-6 text-white text-sm opacity-80">
     ← Volver al inicio
 </div>
 
-<!-- TITULO -->
 <div class="text-center text-white mb-6">
     <h1 class="text-4xl font-bold">Acceso al Campus Instituto UCAM CERT</h1>
     <p class="opacity-80 mt-2">
@@ -35,10 +33,8 @@ body {
     </p>
 </div>
 
-<!-- CARD -->
 <div class="bg-white/95 backdrop-blur p-8 rounded-2xl shadow-2xl w-full max-w-md">
 
-    <!-- ICONO -->
     <div class="flex justify-center mb-4">
         <div class="bg-red-800 text-white p-4 rounded-full text-xl">
             🎓
@@ -50,58 +46,40 @@ body {
         Ingresa tus credenciales para acceder
     </p>
 
-    <!-- EMAIL -->
     <label class="text-sm text-gray-600">Correo electrónico</label>
-    <input 
-        id="email"
-        type="email"
-        placeholder="tu@correo.com"
-        class="w-full p-3 mb-4 border rounded-xl focus:border-red-800 outline-none"
-    >
+    <input id="email" type="email" placeholder="tu@correo.com"
+        class="w-full p-3 mb-4 border rounded-xl">
 
-    <!-- PASSWORD -->
     <label class="text-sm text-gray-600">Contraseña</label>
     <div class="relative mb-4">
-        <input 
-            id="password"
-            type="password"
-            placeholder="••••••••"
-            class="w-full p-3 pr-10 border rounded-xl focus:border-red-800 outline-none"
-        >
+        <input id="password" type="password" placeholder="••••••••"
+            class="w-full p-3 pr-10 border rounded-xl">
 
-        <button 
-            type="button"
-            onclick="togglePassword()" 
+        <button type="button" onclick="togglePassword()"
             class="absolute right-3 top-3 z-10 text-gray-500">
             👁
         </button>
     </div>
 
-    <!-- BOTON -->
-    <button 
-        onclick="login()"
-        class="w-full bg-red-800 text-white p-3 rounded-xl font-bold hover:bg-red-900 transition">
+    <button onclick="login()"
+        class="w-full bg-red-800 text-white p-3 rounded-xl font-bold">
         Ingresar
     </button>
 
-    <!-- OLVIDASTE -->
     <p class="text-center text-red-700 text-sm mt-4">
         ¿Olvidaste tu contraseña?
     </p>
 
-    <!-- MENSAJE -->
     <p id="msg" class="text-center mt-2 text-sm font-semibold"></p>
 
-    <!-- SOPORTE -->
     <p class="text-center text-gray-400 text-xs mt-4">
         Si tienes problemas para acceder, contacta a soporte técnico
     </p>
 
 </div>
 
-<!-- LOGO -->
 <div class="mt-6">
-    <img src="logo-instituto-ucam-cert.png" class="w-20 mx-auto opacity-90">
+    <img src="logo-instituto-ucam-cert.png" class="w-20 mx-auto">
 </div>
 
 <script>
