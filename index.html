@@ -1,88 +1,126 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acceso al Campus - Instituto UCAM CERT</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<title>Acceso al Campus Instituto UCAM CERT</title>
 
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
-            url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1?q=80&w=2070');
-            background-size: cover;
-            background-position: center;
-        }
-
-        .btn-ucam {
-            background-color: #8B1D1D;
-        }
-
-        .btn-ucam:hover {
-            background-color: #631515;
-        }
-
-        .glass {
-            background: rgba(255,255,255,0.95);
-            backdrop-filter: blur(10px);
-        }
-    </style>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)),
+    url('https://images.unsplash.com/photo-1523050854058-8df90110c9f1');
+    background-size: cover;
+    background-position: center;
+}
+</style>
 </head>
 
-<body class="min-h-screen flex flex-col items-center justify-center p-6">
+<body class="flex flex-col items-center justify-center min-h-screen px-4">
 
-<div class="text-center mb-8">
-    <h1 class="text-4xl font-bold text-white">Acceso al Campus UCAM CERT</h1>
+<!-- BOTON VOLVER -->
+<div class="absolute top-6 left-6 text-white text-sm cursor-pointer opacity-80">
+    ← Volver al inicio
 </div>
 
-<div class="glass w-full max-w-md p-8 rounded-2xl shadow-xl">
+<!-- TITULO -->
+<div class="text-center text-white mb-6">
+    <h1 class="text-4xl font-bold">Acceso al Campus Instituto UCAM CERT</h1>
+    <p class="opacity-80 mt-2">
+        Formación profesional con respaldo académico internacional
+    </p>
+</div>
 
-    <div class="text-center mb-6">
-        <h2 class="text-xl font-bold">Ingreso</h2>
+<!-- CARD LOGIN -->
+<div class="bg-white/95 backdrop-blur p-8 rounded-2xl shadow-2xl w-full max-w-md">
+
+    <!-- ICONO -->
+    <div class="flex justify-center mb-4">
+        <div class="bg-red-800 text-white p-4 rounded-full text-xl">
+            🎓
+        </div>
     </div>
 
-    <input id="email" type="email" placeholder="Email"
-        class="w-full mb-4 p-3 border rounded-xl">
+    <h2 class="text-xl font-bold text-center mb-1">Ingreso al Campus</h2>
+    <p class="text-center text-gray-500 text-sm mb-6">
+        Ingresa tus credenciales para acceder
+    </p>
 
-    <input id="password" type="password" placeholder="Contraseña"
-        class="w-full mb-4 p-3 border rounded-xl">
+    <!-- EMAIL -->
+    <label class="text-sm text-gray-600">Correo electrónico</label>
+    <input 
+        id="email"
+        type="email"
+        placeholder="tu@correo.com"
+        class="w-full p-3 mb-4 border rounded-xl focus:border-red-800 outline-none"
+    >
 
-    <button onclick="login()"
-        class="btn-ucam w-full text-white py-3 rounded-xl font-bold">
-        INGRESAR
+    <!-- PASSWORD -->
+    <label class="text-sm text-gray-600">Contraseña</label>
+    <div class="relative mb-4">
+        <input 
+            id="password"
+            type="password"
+            placeholder="••••••••"
+            class="w-full p-3 border rounded-xl focus:border-red-800 outline-none"
+        >
+        <span 
+            onclick="togglePassword()" 
+            class="absolute right-3 top-3 cursor-pointer text-gray-500">
+            👁
+        </span>
+    </div>
+
+    <!-- BOTON -->
+    <button 
+        onclick="login()"
+        class="w-full bg-red-800 text-white p-3 rounded-xl font-bold hover:bg-red-900 transition">
+        Ingresar
     </button>
 
-    <p id="msg" class="text-center text-sm mt-4"></p>
+    <!-- OLVIDASTE -->
+    <p class="text-center text-red-700 text-sm mt-4 cursor-pointer">
+        ¿Olvidaste tu contraseña?
+    </p>
 
+    <!-- MENSAJE -->
+    <p id="msg" class="text-center mt-2 text-sm font-semibold"></p>
+
+    <!-- SOPORTE -->
+    <p class="text-center text-gray-400 text-xs mt-4">
+        Si tienes problemas para acceder, contacta a soporte técnico
+    </p>
+
+</div>
+
+<!-- LOGO ABAJO -->
+<div class="mt-6">
+    <img src="logo-instituto-ucam-cert.png" class="w-20 mx-auto opacity-90">
 </div>
 
 <script>
-const SUPABASE_URL = "https://xehflnbpyatodvcwkflw.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhlaGZsbmJweWF0b2R2Y3drZmx3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0MzQ1NjIsImV4cCI6MjA5MjAxMDU2Mn0.m3yEFlw8AuEShgNqPDific8A8GcJxsBSVryfWDesdpI";
+const supabase = window.supabase.createClient(
+    "https://xehflnbpyatodvcwkflw.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhlaGZsbmJweWF0b2R2Y3drZmx3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0MzQ1NjIsImV4cCI6MjA5MjAxMDU2Mn0.m3yEFlw8AuEShgNqPDific8A8GcJxsBSVryfWDesdpI"
+);
 
-const supa = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+function togglePassword() {
+    const input = document.getElementById("password");
+    input.type = input.type === "password" ? "text" : "password";
+}
 
 async function login() {
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
     const msg = document.getElementById("msg");
 
-    if (!email || !password) {
-        msg.innerText = "Completa todos los campos";
-        msg.style.color = "red";
-        return;
-    }
+    msg.innerText = "Verificando acceso...";
 
-    msg.innerText = "Verificando...";
-    msg.style.color = "gray";
-
-    const { data, error } = await supa.auth.signInWithPassword({
+    const { error } = await supabase.auth.signInWithPassword({
         email,
         password
     });
@@ -93,10 +131,9 @@ async function login() {
         return;
     }
 
-    msg.innerText = "Acceso correcto";
+    msg.innerText = "Acceso concedido. Redirigiendo...";
     msg.style.color = "green";
 
-    // 🔥 REDIRECCIÓN REAL
     setTimeout(() => {
         window.location.href = "dashboard.html";
     }, 1000);
