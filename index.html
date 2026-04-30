@@ -3,65 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Campus Virtual - Instituto UCAM</title>
+    <title>Admin - Instituto UCAM</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; }
-        .ucam-card { background: white; border-top: 6px solid #0f172a; }
-    </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4">
-    <div class="ucam-card max-w-sm w-full p-10 rounded-xl shadow-2xl">
-        <div class="text-center mb-10">
-            <h1 class="text-2xl font-bold text-slate-900 tracking-tighter uppercase">Instituto UCAM</h1>
-            <p class="text-slate-400 text-[10px] mt-2 font-bold tracking-[0.3em] uppercase">Gestión de Impacto Ambiental Positivo</p>
+<body class="bg-slate-50 min-h-screen p-8">
+
+    <!-- CABECERA DE SUPER ADMIN -->
+    <div class="max-w-4xl mx-auto mb-10 flex justify-between items-center">
+        <div>
+            <h1 class="text-2xl font-bold text-slate-900 uppercase tracking-tighter">Panel de Control General</h1>
+            <p class="text-[10px] text-slate-500 font-bold uppercase tracking-[0.3em]">Instituto UCAM Cert - Gestión de Usuarios</p>
+        </div>
+        <div class="bg-slate-900 text-white text-[10px] px-4 py-2 rounded-full font-bold uppercase">Super Admin: Hugo</div>
+    </div>
+
+    <!-- FORMULARIO DE ALTA (Lo que pediste) -->
+    <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="p-6 border-b border-slate-100 bg-slate-50">
+            <h2 class="text-xs font-bold text-slate-700 uppercase tracking-widest">Inscribir Nuevo Miembro</h2>
         </div>
         
-        <div class="space-y-6">
+        <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-                <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Email del Cursante</label>
-                <input type="email" id="email" class="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 text-sm focus:outline-none focus:border-slate-900 transition">
+                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-2">Correo Electrónico</label>
+                <input type="email" id="new-email" class="w-full p-3 border rounded-lg text-sm outline-none focus:border-slate-900">
             </div>
-            
-            <div class="relative">
-                <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2">Contraseña</label>
-                <input type="password" id="password" class="w-full px-4 py-3 rounded-lg bg-slate-50 border border-slate-200 text-sm focus:outline-none focus:border-slate-900 transition">
+            <div>
+                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-2">Rol Asignado</label>
+                <select id="new-role" class="w-full p-3 border rounded-lg text-sm bg-white outline-none focus:border-slate-900">
+                    <option value="cursante">Cursante (Estudiante)</option>
+                    <option value="instructor">Instructor (Docente)</option>
+                    <option value="asistente">Asistente Técnico</option>
+                    <option value="secretaria">Secretaría Académica</option>
+                </select>
             </div>
-
-            <button onclick="signIn()" class="w-full bg-slate-900 text-white font-bold py-4 rounded-lg text-[11px] uppercase tracking-[0.2em] hover:bg-black transition-all shadow-lg active:scale-95">
-                Ingresar al Programa
-            </button>
-            
-            <p id="message" class="text-[10px] text-center font-bold uppercase min-h-[20px]"></p>
+            <div>
+                <label class="block text-[10px] font-bold text-slate-400 uppercase mb-2">Contraseña Temporal</label>
+                <input type="text" id="new-password" value="1234" class="w-full p-3 border rounded-lg text-sm outline-none focus:border-slate-900">
+            </div>
+            <div class="flex items-end">
+                <button onclick="registerUser()" class="w-full bg-slate-900 text-white font-bold py-3 rounded-lg text-[10px] uppercase tracking-widest hover:bg-black transition">
+                    Dar de Alta en Sistema
+                </button>
+            </div>
         </div>
+        <div id="admin-msg" class="px-8 pb-6 text-[10px] font-bold uppercase"></div>
     </div>
 
     <script>
-        // Configuración de Supabase con tus datos reales
         const SUPABASE_URL = 'https://xehflnbpyatodvcwkflw.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhlaGZsbmJweWF0b2R2Y3drZmx3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0MzQ1NjIsImV4cCI6MjA5MjAxMDU2Mn0.m3yEFlw8AuEShgNqPDific8A8GcJxsBSVryfWDesdpI';
-
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        async function signIn() {
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const msg = document.getElementById('message');
-            
-            msg.className = "text-[10px] text-center font-bold text-slate-400 uppercase";
-            msg.innerText = "Verificando credenciales...";
+        async function registerUser() {
+            const email = document.getElementById('new-email').value;
+            const password = document.getElementById('new-password').value;
+            const role = document.getElementById('new-role').value;
+            const msg = document.getElementById('admin-msg');
 
-            const { error } = await _supabase.auth.signInWithPassword({ email, password });
+            msg.className = "px-8 pb-6 text-[10px] font-bold uppercase text-slate-400";
+            msg.innerText = "Procesando inscripción...";
+
+            // Nota técnica para Hugo: Supabase requiere configurar "Edge Functions" para crear usuarios 
+            // desde el frente por seguridad, pero por ahora usaremos la función de SignUp.
+            const { data, error } = await _supabase.auth.signUp({
+                email: email,
+                password: password,
+                options: {
+                    data: { role: role, is_new: true } // Guardamos el rol y que es nuevo
+                }
+            });
 
             if (error) {
-                msg.className = "text-[10px] text-center font-bold text-red-600 uppercase";
+                msg.className = "px-8 pb-6 text-[10px] font-bold uppercase text-red-600";
                 msg.innerText = "Error: " + error.message;
             } else {
-                msg.className = "text-[10px] text-center font-bold text-emerald-600 uppercase";
-                msg.innerText = "Acceso concedido. Bienvenido.";
-                // Aquí podrías redirigir a la página de módulos
+                msg.className = "px-8 pb-6 text-[10px] font-bold uppercase text-emerald-600";
+                msg.innerText = `Éxito: ${email} ha sido registrado como ${role}.`;
             }
         }
     </script>
