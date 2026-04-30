@@ -7,41 +7,71 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
     <style>
-        .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+        .campus-card { background: white; border-top: 6px solid #1e3a8a; }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4" style="background-image: url('https://images.unsplash.com/photo-1523050853063-bd80e29247f5?q=80&w=2070&auto=format&fit=crop'); background-size: cover; background-blend-mode: overlay; background-color: #4a0404;">
-    <div class="glass max-w-md w-full p-8 rounded-2xl shadow-2xl text-center border-t-8 border-[#4a0404]">
-        <h1 class="text-3xl font-bold text-[#4a0404] mb-2 uppercase">Instituto UCAM</h1>
-        <p class="text-gray-600 mb-8 font-medium">Gestión de Impacto Ambiental Positivo</p>
+<body class="min-h-screen flex items-center justify-center p-4">
+    <div class="campus-card max-w-md w-full p-10 rounded-xl shadow-2xl">
+        <div class="text-center mb-8">
+            <h1 class="text-2xl font-bold text-gray-800 tracking-tight uppercase">Instituto UCAM</h1>
+            <div class="h-1 w-12 bg-blue-800 mx-auto mt-2"></div>
+            <p class="text-gray-500 text-sm mt-3 font-medium">Gestión de Impacto Ambiental Positivo</p>
+        </div>
         
-        <div id="login-form" class="space-y-4 text-left">
+        <div class="space-y-5">
             <div>
-                <label class="block text-xs font-bold text-gray-400 uppercase mb-1 ml-1 font-sans">Correo del Estudiante</label>
-                <input type="email" id="email" placeholder="ejemplo@correo.com" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#4a0404]">
+                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Correo del Cursante</label>
+                <input type="email" id="email" placeholder="usuario@ucamcert.pro" 
+                    class="w-full px-4 py-3 rounded border border-gray-300 focus:ring-2 focus:ring-blue-800 outline-none transition">
             </div>
-            <div>
-                <label class="block text-xs font-bold text-gray-400 uppercase mb-1 ml-1 font-sans">Contraseña</label>
-                <input type="password" id="password" placeholder="••••••••" class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#4a0404]">
+            
+            <div class="relative">
+                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Contraseña</label>
+                <input type="password" id="password" placeholder="••••••••" 
+                    class="w-full px-4 py-3 rounded border border-gray-300 focus:ring-2 focus:ring-blue-800 outline-none transition">
+                <button type="button" onclick="togglePass()" class="absolute right-3 top-9 text-gray-400 hover:text-blue-800 font-medium text-xs">
+                    MOSTRAR
+                </button>
             </div>
-            <button onclick="signIn()" class="w-full bg-[#4a0404] text-white font-bold py-3 rounded-lg hover:bg-[#600505] transition shadow-lg mt-4 uppercase tracking-widest">
-                Ingresar al Campus
+
+            <button onclick="signIn()" class="w-full bg-[#1e3a8a] text-white font-bold py-3 rounded hover:bg-blue-900 transition shadow-md uppercase tracking-widest text-sm">
+                Acceder al Programa
             </button>
-            <p id="message" class="text-red-600 text-sm mt-2 text-center font-medium"></p>
+            
+            <p id="message" class="text-sm mt-4 text-center font-semibold min-h-[20px]"></p>
+        </div>
+
+        <div class="mt-8 pt-6 border-t border-gray-100 text-center text-[10px] text-gray-400 uppercase tracking-[0.2em]">
+            Certificación Ambiental Internacional
         </div>
     </div>
 
     <script>
-        // Configuración extraída de tus capturas
         const SUPABASE_URL = 'https://xehflnbpyatodvcwkflw.supabase.co'; 
         const SUPABASE_KEY = 'sb_publishable_cKDc07c8dfsj4tarmudjja_9_Avq_qS_m74uU8Rz_5o'; 
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        function togglePass() {
+            const passInput = document.getElementById('password');
+            const btn = event.target;
+            if (passInput.type === "password") {
+                passInput.type = "text";
+                btn.innerText = "OCULTAR";
+            } else {
+                passInput.type = "password";
+                btn.innerText = "MOSTRAR";
+            }
+        }
 
         async function signIn() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             const msg = document.getElementById('message');
-            msg.innerText = "Verificando...";
+            
+            msg.className = "text-sm mt-4 text-center font-semibold text-blue-600";
+            msg.innerText = "Verificando credenciales...";
 
             const { data, error } = await _supabase.auth.signInWithPassword({
                 email: email,
@@ -49,12 +79,12 @@
             });
 
             if (error) {
-                msg.innerText = "Error: Credenciales no válidas";
+                msg.className = "text-sm mt-4 text-center font-semibold text-red-600";
+                msg.innerText = "Error: " + error.message;
             } else {
-                msg.classList.remove('text-red-600');
-                msg.classList.add('text-green-600');
-                msg.innerText = "¡Ingreso exitoso! Bienvenido cursante.";
-                // Aquí podrías redirigir a la página de módulos
+                msg.className = "text-sm mt-4 text-center font-semibold text-green-600";
+                msg.innerText = "Ingreso exitoso. Cargando módulos...";
+                // Aquí redirigiremos a la página de contenidos técnicos
             }
         }
     </script>
