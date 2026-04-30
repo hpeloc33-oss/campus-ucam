@@ -1,1 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>Campus UCAM CERT</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+</head>
+
+<body class="min-h-screen bg-gray-100">
+
+<!-- HEADER -->
+<div class="bg-[#8B1D1D] text-white p-6 flex justify-between">
+  <h1 class="text-xl font-bold">UCAM CERT Campus</h1>
+  <button onclick="logout()">Salir</button>
+</div>
+
+<!-- CONTENIDO -->
+<div class="p-8">
+
+  <h2 class="text-2xl font-bold mb-6">Mis Programas</h2>
+
+  <div id="programs" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
+
+</div>
+
+<script>
+
+const SUPABASE_URL = 'https://xehflnbpyatodvcwkflw.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhlaGZsbmJweWF0b2R2Y3drZmx3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0MzQ1NjIsImV4cCI6MjA5MjAxMDU2Mn0.m3yEFlw8AuEShgNqPDific8A8GcJxsBSVryfWDesdpI';
+
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+async function cargarProgramas() {
+
+  const { data, error } = await supabaseClient
+    .from('programs')
+    .select('*');
+
+  const container = document.getElementById('programs');
+
+  if (error) {
+    container.innerHTML = 'Error cargando programas';
+    return;
+  }
+
+  data.forEach(program => {
+
+    const card = `
+      <div class="bg-white rounded-xl shadow p-6">
+        <h3 class="text-lg font-bold mb-2">${program.title}</h3>
+        <p class="text-gray-500 mb-4">${program.description}</p>
+
+        <button onclick="entrarPrograma('${program.id}')"
+        class="bg-[#8B1D1D] text-white px-4 py-2 rounded">
+        Ingresar
+        </button>
+      </div>
+    `;
+
+    container.innerHTML += card;
+
+  });
+
+}
+
+function entrarPrograma(id) {
+  alert("Programa: " + id);
+}
+
+async function logout() {
+  await supabaseClient.auth.signOut();
+  window.location.href = 'index.html';
+}
+
+cargarProgramas();
+
+</script>
+
+</body>
+</html>
