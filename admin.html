@@ -29,7 +29,7 @@
     <input id="email" type="email" placeholder="Correo"
       class="w-full mb-3 p-2 border rounded">
 
-    <input id="password" type="text" value="1234"
+    <input id="password" type="text" value="123456"
       class="w-full mb-3 p-2 border rounded">
 
     <select id="rol" class="w-full mb-3 p-2 border rounded">
@@ -59,43 +59,58 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+// 🔐 Verificar sesión + rol admin
 async function verificarSesion() {
+
   const { data } = await supabaseClient.auth.getUser();
 
   if (!data.user) {
     window.location.href = "index.html";
+    return;
+  }
+
+  const { data: perfil } = await supabaseClient
+    .from("profiles")
+    .select("rol")
+    .eq("id", data.user.id)
+    .single();
+
+  if (!perfil || perfil.rol !== "admin") {
+    alert("Acceso no autorizado");
+    window.location.href = "dashboard.html";
   }
 }
 
+// 🔥 CREAR USUARIO (EDGE FUNCTION)
 async function crearUsuario() {
 
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
   const rol = document.getElementById("rol").value;
 
-  const { data, error } = await supabaseClient.auth.signUp({
-    email,
-    password
-  });
+  const res = await fetch(
+    "https://xehflnbpyatodvcwkflw.functions.supabase.co/create-user",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ email, password, rol })
+    }
+  );
 
-  if (error) {
-    alert(error.message);
+  const data = await res.json();
+
+  if (data.error) {
+    alert(data.error);
     return;
   }
-
-  await supabaseClient.from("profiles").insert([
-    {
-      id: data.user.id,
-      email: email,
-      rol: rol,
-      must_change_password: true
-    }
-  ]);
 
   alert("Usuario creado correctamente");
   cargarUsuarios();
 }
 
+// 📋 LISTAR USUARIOS
 async function cargarUsuarios() {
 
   const { data, error } = await supabaseClient
@@ -120,6 +135,7 @@ async function cargarUsuarios() {
   });
 }
 
+// 🚪 LOGOUT
 async function logout() {
   await supabaseClient.auth.signOut();
   window.location.href = "index.html";
