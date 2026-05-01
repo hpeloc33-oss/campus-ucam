@@ -30,23 +30,78 @@
 
 <script>
 
+// 🔗 CONFIG
 const SUPABASE_URL = 'https://xehflnbpyatodvcwkflw.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhlaGZsbmJweWF0b2R2Y3drZmx3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0MzQ1NjIsImV4cCI6MjA5MjAxMDU2Mn0.m3yEFlw8AuEShgNqPDific8A8GcJxsBSVryfWDesdpI';
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+// 🔐 VALIDAR SESIÓN Y ROL
+async function iniciar() {
+
+  const { data: { session } } = await supabaseClient.auth.getSession();
+
+  // ❌ NO LOGUEADO
+  if (!session) {
+    window.location.href = "index.html";
+    return;
+  }
+
+  const user = session.user;
+
+  // 🔍 PERFIL
+  const { data: profile, error } = await supabaseClient
+    .from("profiles")
+    .select("*")
+    .eq("id", user.id)
+    .single();
+
+  if (error || !profile) {
+    alert("Error cargando perfil");
+    return;
+  }
+
+  // 🔁 REDIRECCIÓN POR ROL
+  if (profile.rol === "admin") {
+    window.location.href = "admin.html";
+    return;
+  }
+
+  if (profile.rol === "secretaria") {
+    window.location.href = "secretaria.html";
+    return;
+  }
+
+  if (profile.rol === "instructor") {
+    window.location.href = "instructor.html";
+    return;
+  }
+
+  if (profile.rol === "asistente") {
+    window.location.href = "asistente.html";
+    return;
+  }
+
+  // 👉 SI ES CURSANTE → CARGA PROGRAMAS
+  cargarProgramas();
+
+}
+
+// 📚 CARGAR PROGRAMAS
 async function cargarProgramas() {
 
   const { data, error } = await supabaseClient
-    .from('programs')
-    .select('*');
+    .from("programs")
+    .select("*");
 
-  const container = document.getElementById('programs');
+  const container = document.getElementById("programs");
 
   if (error) {
-    container.innerHTML = 'Error cargando programas';
+    container.innerHTML = "Error cargando programas";
     return;
   }
+
+  container.innerHTML = "";
 
   data.forEach(program => {
 
@@ -68,16 +123,19 @@ async function cargarProgramas() {
 
 }
 
+// 👉 ENTRAR A PROGRAMA
 function entrarPrograma(id) {
   alert("Programa: " + id);
 }
 
+// 🚪 LOGOUT
 async function logout() {
   await supabaseClient.auth.signOut();
-  window.location.href = 'index.html';
+  window.location.href = "index.html";
 }
 
-cargarProgramas();
+// 🚀 INICIO
+iniciar();
 
 </script>
 
