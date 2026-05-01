@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Admin - UCAM CERT</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+
+<!-- HEADER -->
+<div class="bg-[#8B1D1D] text-white p-6 flex justify-between">
+  <h1 class="text-xl font-bold">Panel Admin - UCAM CERT</h1>
+  <button onclick="logout()">Salir</button>
+</div>
+
+<!-- CONTENIDO -->
+<div class="p-8">
+
+  <h2 class="text-2xl font-bold mb-6">Crear Usuario</h2>
+
+  <div class="bg-white p-6 rounded shadow mb-10 max-w-md">
+
+    <input id="email" type="email" placeholder="Correo"
+      class="w-full mb-3 p-2 border rounded">
+
+    <input id="password" type="text" value="1234"
+      class="w-full mb-3 p-2 border rounded">
+
+    <select id="rol" class="w-full mb-3 p-2 border rounded">
+      <option value="admin">Admin</option>
+      <option value="secretaria">Secretaria</option>
+      <option value="instructor">Instructor</option>
+      <option value="asistente">Asistente</option>
+      <option value="cursante">Cursante</option>
+    </select>
+
+    <button onclick="crearUsuario()"
+      class="bg-[#8B1D1D] text-white px-4 py-2 rounded w-full">
+      Crear usuario
+    </button>
+
+  </div>
+
+  <h2 class="text-2xl font-bold mb-4">Usuarios</h2>
+  <div id="usuarios" class="bg-white p-6 rounded shadow"></div>
+
+</div>
+
+<script>
+
+const SUPABASE_URL = 'https://xehflnbpyatodvcwkflw.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhlaGZsbmJweWF0b2R2Y3drZmx3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0MzQ1NjIsImV4cCI6MjA5MjAxMDU2Mn0.m3yEFlw8AuEShgNqPDific8A8GcJxsBSVryfWDesdpI';
+
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+async function verificarSesion() {
+  const { data } = await supabaseClient.auth.getUser();
+
+  if (!data.user) {
+    window.location.href = "index.html";
+  }
+}
+
+async function crearUsuario() {
+
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+  const rol = document.getElementById("rol").value;
+
+  const { data, error } = await supabaseClient.auth.signUp({
+    email,
+    password
+  });
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  await supabaseClient.from("profiles").insert([
+    {
+      id: data.user.id,
+      email: email,
+      rol: rol,
+      must_change_password: true
+    }
+  ]);
+
+  alert("Usuario creado correctamente");
+  cargarUsuarios();
+}
+
+async function cargarUsuarios() {
+
+  const { data, error } = await supabaseClient
+    .from("profiles")
+    .select("*");
+
+  const cont = document.getElementById("usuarios");
+
+  cont.innerHTML = "";
+
+  if (error) {
+    cont.innerHTML = "Error cargando usuarios";
+    return;
+  }
+
+  data.forEach(u => {
+    cont.innerHTML += `
+      <div class="border-b py-2">
+        ${u.email} - <b>${u.rol}</b>
+      </div>
+    `;
+  });
+}
+
+async function logout() {
+  await supabaseClient.auth.signOut();
+  window.location.href = "index.html";
+}
+
+verificarSesion();
+cargarUsuarios();
+
+</script>
+
+</body>
+</html>
