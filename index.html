@@ -6,11 +6,8 @@
 
 <title>Acceso al Campus - Instituto UCAM CERT</title>
 
-<!-- ✅ Supabase -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<!-- Tailwind -->
 <script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
 <style>
 body {
@@ -69,19 +66,29 @@ Ingresar
 
 <script>
 
-// 🔥 Cliente Supabase REAL (ya configurado)
+// 🔥 Cliente Supabase
 const supa = supabase.createClient(
   "https://xehflnbpyatodvcwkflw.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhlaGZsbmJweWF0b2R2Y3drZmx3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0MzQ1NjIsImV4cCI6MjA5MjAxMDU2Mn0.m3yEFlw8AuEShgNqPDific8A8GcJxsBSVryfWDesdpI"
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhlaGZsbmJweWF0b2R2Y3drZmx3Iiwicm9sZSI6ImFub24iLC" +
+  "JpYXQiOjE3NzY0MzQ1NjIsImV4cCI6MjA5MjAxMDU2Mn0.m3yEFlw8AuEShgNqPDific8A8GcJxsBSVryfWDesdpI"
 );
 
-// 👁 Ver password
+// 👁 Mostrar / ocultar password
 function togglePassword() {
     const p = document.getElementById("password");
     p.type = p.type === "password" ? "text" : "password";
 }
 
-// 🔐 Login
+// 🔥 VERIFICAR SESIÓN AL CARGAR
+window.onload = async () => {
+    const { data: { session } } = await supa.auth.getSession();
+
+    if (session) {
+        await redirigirPorRol(session.user.id);
+    }
+};
+
+// 🔐 LOGIN
 async function login() {
 
     const email = document.getElementById("email").value;
@@ -101,42 +108,31 @@ async function login() {
         return;
     }
 
-    const user = data.user;
+    await redirigirPorRol(data.user.id);
+}
 
-    if (!user) {
-        msg.innerText = "Error obteniendo usuario";
-        msg.style.color = "red";
-        return;
-    }
+// 🔥 REDIRECCIÓN POR ROL
+async function redirigirPorRol(userId) {
 
-    // 🔥 Consulta correcta (NO rompe con 406)
-    const { data: profile, error: errorProfile } = await supa
+    const { data: profile, error } = await supa
         .from('profiles')
-        .select('*')
-        .eq('id', user.id)
+        .select('id, email, rol')
+        .eq('id', userId)
         .maybeSingle();
 
-    if (errorProfile || !profile) {
-        msg.innerText = "Error cargando perfil";
-        msg.style.color = "red";
+    if (error || !profile) {
+        document.getElementById("msg").innerText = "Error cargando perfil";
+        document.getElementById("msg").style.color = "red";
         return;
     }
 
-    msg.innerText = "Acceso correcto";
-    msg.style.color = "green";
+    const rol = profile.rol;
 
-    // 🚀 Redirección por rol
-    setTimeout(() => {
-
-        const rol = profile.rol;
-
-        if (rol === "admin") window.location.href = "admin.html";
-        else if (rol === "secretaria") window.location.href = "secretaria.html";
-        else if (rol === "instructor") window.location.href = "instructor.html";
-        else if (rol === "asistente") window.location.href = "asistente.html";
-        else window.location.href = "dashboard.html";
-
-    }, 1000);
+    if (rol === "admin") window.location.href = "admin.html";
+    else if (rol === "secretaria") window.location.href = "secretaria.html";
+    else if (rol === "instructor") window.location.href = "instructor.html";
+    else if (rol === "asistente") window.location.href = "asistente.html";
+    else window.location.href = "dashboard.html";
 }
 
 </script>
