@@ -55,7 +55,7 @@
 <script>
 
 const SUPABASE_URL = 'https://xehflnbpyatodvcwkflw.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhlaGZsbmJweWF0b2R2Y3drZmx3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0MzQ1NjIsImV4cCI6MjA5MjAxMDU2Mn0.m3yEFlw8AuEShgNqPDific8A8GcJxsBSVryfWDesdpI';
+const SUPABASE_KEY = 'TU_ANON_KEY_AQUI'; // 👈 dejá la tuya (la que ya tenías)
 
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -81,7 +81,7 @@ async function verificarSesion() {
   }
 }
 
-// 🔥 CREAR USUARIO (EDGE FUNCTION)
+// 🔥 CREAR USUARIO (BIEN HECHO)
 async function crearUsuario() {
 
   const email = document.getElementById("email").value;
@@ -93,7 +93,8 @@ async function crearUsuario() {
     {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "apikey": SUPABASE_KEY   // 🔥 ESTO SOLUCIONA EL 401
       },
       body: JSON.stringify({ email, password, rol })
     }
@@ -101,8 +102,8 @@ async function crearUsuario() {
 
   const data = await res.json();
 
-  if (data.error) {
-    alert(data.error);
+  if (!res.ok) {
+    alert(data.error || "Error creando usuario");
     return;
   }
 
