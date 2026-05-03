@@ -1,78 +1,12 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Acceso al Campus - Instituto UCAM CERT</title>
-
-<script src="https://cdn.tailwindcss.com"></script>
-<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-
-<style>
-body {
-    font-family: Arial;
-    background: #5a5a5a;
-}
-</style>
-</head>
-
-<body class="min-h-screen flex flex-col items-center justify-center">
-
-<h1 class="text-4xl font-bold text-white mb-2">
-Acceso al Campus Instituto UCAM CERT
-</h1>
-
-<p class="text-white mb-6 opacity-80">
-Formación profesional con respaldo académico internacional
-</p>
-
-<div class="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md">
-
-<h2 class="text-xl font-bold text-center mb-4">
-Ingreso al Campus
-</h2>
-
-<p class="text-center text-gray-500 mb-6">
-Ingresa tus credenciales para acceder
-</p>
-
-<label class="text-sm">Usuario</label>
-<input id="email" type="email"
-class="w-full p-3 mt-1 mb-4 rounded bg-gray-100">
-
-<label class="text-sm">Contraseña</label>
-
-<div style="position:relative;">
-<input id="password" type="password"
-class="w-full p-3 mt-1 mb-4 rounded bg-gray-100">
-
-<span onclick="togglePassword()"
-style="position:absolute; right:10px; top:12px; cursor:pointer;">
-👁
-</span>
-</div>
-
-<button onclick="login()"
-class="w-full bg-red-800 text-white py-3 rounded font-bold">
-Ingresar
-</button>
-
-<p id="msg" class="text-center mt-4 text-sm"></p>
-
-</div>
-
-<img src="logo-instituto-ucam-cert.png" style="width:120px;margin-top:20px;">
-
 <script>
 
-// 🔥 CLIENTE SUPABASE (SIN DUPLICAR)
+// 🔥 CLIENTE SUPABASE
 let supa;
 
 if (!window.supabaseClient) {
     window.supabaseClient = supabase.createClient(
         "https://xehflnbpyatodvcwkflw.supabase.co",
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhlaGZsbmJweWF0b2R2Y3drZmx3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY0MzQ1NjIsImV4cCI6MjA5MjAxMDU2Mn0.m3yEFlw8AuEShgNqPDific8A8GcJxsBSVryfWDesdpI"
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
     );
 }
 
@@ -86,7 +20,7 @@ function togglePassword() {
 }
 
 
-// 🔐 LOGIN + ROL
+// 🔐 LOGIN + ROL (FIX REAL)
 async function login() {
 
     const email = document.getElementById("email").value;
@@ -106,15 +40,30 @@ async function login() {
         return;
     }
 
-    // 🔎 TRAER PERFIL
+    // 🔥 IMPORTANTE: asegurar que user exista
+    const user = data.user;
+
+    if (!user || !user.id) {
+        msg.innerText = "Error obteniendo usuario";
+        msg.style.color = "red";
+        return;
+    }
+
+    // 🔥 CAMBIO CLAVE AQUÍ
     const { data: profile, error: errorProfile } = await supa
         .from('profiles')
         .select('*')
-        .eq('id', data.user.id)
-        .single();
+        .eq('id', user.id)
+        .maybeSingle(); // 👈 ESTE ES EL FIX
 
-    if (errorProfile || !profile) {
+    if (errorProfile) {
         msg.innerText = "Error cargando perfil";
+        msg.style.color = "red";
+        return;
+    }
+
+    if (!profile) {
+        msg.innerText = "Perfil no encontrado";
         msg.style.color = "red";
         return;
     }
@@ -122,7 +71,7 @@ async function login() {
     msg.innerText = "Acceso correcto";
     msg.style.color = "green";
 
-    // 🚀 REDIRECCIÓN POR ROL
+    // 🚀 REDIRECCIÓN
     setTimeout(() => {
 
         const rol = profile.rol;
@@ -131,12 +80,9 @@ async function login() {
         else if (rol === "secretaria") window.location.href = "secretaria.html";
         else if (rol === "instructor") window.location.href = "instructor.html";
         else if (rol === "asistente") window.location.href = "asistente.html";
-        else window.location.href = "dashboard.html"; // cursante
+        else window.location.href = "dashboard.html";
 
     }, 1000);
 }
 
 </script>
-
-</body>
-</html>
