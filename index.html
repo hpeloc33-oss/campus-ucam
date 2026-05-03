@@ -7,7 +7,6 @@
 <title>Acceso al Campus - Instituto UCAM CERT</title>
 
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
 <style>
 body {
@@ -64,32 +63,28 @@ Ingresar
 
 <img src="logo-instituto-ucam-cert.png" style="width:120px;margin-top:20px;">
 
-<script>
 
-// 🔥 Cliente Supabase
-const supa = supabase.createClient(
+<!-- 🔥 SUPABASE BIEN IMPORTADO -->
+<script type="module">
+
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+
+// 🔑 CONFIG (ESTO YA LO TENÉS BIEN)
+const supabase = createClient(
   "https://xehflnbpyatodvcwkflw.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhlaGZsbmJweWF0b2R2Y3drZmx3Iiwicm9sZSI6ImFub24iLC" +
-  "JpYXQiOjE3NzY0MzQ1NjIsImV4cCI6MjA5MjAxMDU2Mn0.m3yEFlw8AuEShgNqPDific8A8GcJxsBSVryfWDesdpI"
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
 );
 
-// 👁 Mostrar / ocultar password
-function togglePassword() {
+
+// 👁 VER PASSWORD
+window.togglePassword = function () {
     const p = document.getElementById("password");
     p.type = p.type === "password" ? "text" : "password";
 }
 
-// 🔥 VERIFICAR SESIÓN AL CARGAR
-window.onload = async () => {
-    const { data: { session } } = await supa.auth.getSession();
-
-    if (session) {
-        await redirigirPorRol(session.user.id);
-    }
-};
 
 // 🔐 LOGIN
-async function login() {
+window.login = async function () {
 
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
@@ -97,7 +92,7 @@ async function login() {
 
     msg.innerText = "Verificando...";
 
-    const { data, error } = await supa.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password
     });
@@ -108,31 +103,33 @@ async function login() {
         return;
     }
 
-    await redirigirPorRol(data.user.id);
-}
-
-// 🔥 REDIRECCIÓN POR ROL
-async function redirigirPorRol(userId) {
-
-    const { data: profile, error } = await supa
+    // 🔎 PERFIL (SIN ROMPER)
+    const { data: profile } = await supabase
         .from('profiles')
-        .select('id, email, rol')
-        .eq('id', userId)
-        .maybeSingle();
+        .select('*')
+        .eq('id', data.user.id)
+        .maybeSingle(); // 🔥 clave
 
-    if (error || !profile) {
-        document.getElementById("msg").innerText = "Error cargando perfil";
-        document.getElementById("msg").style.color = "red";
+    if (!profile) {
+        msg.innerText = "Perfil no encontrado";
+        msg.style.color = "red";
         return;
     }
 
-    const rol = profile.rol;
+    msg.innerText = "Acceso correcto";
+    msg.style.color = "green";
 
-    if (rol === "admin") window.location.href = "admin.html";
-    else if (rol === "secretaria") window.location.href = "secretaria.html";
-    else if (rol === "instructor") window.location.href = "instructor.html";
-    else if (rol === "asistente") window.location.href = "asistente.html";
-    else window.location.href = "dashboard.html";
+    setTimeout(() => {
+
+        const rol = profile.rol;
+
+        if (rol === "admin") window.location.href = "admin.html";
+        else if (rol === "secretaria") window.location.href = "secretaria.html";
+        else if (rol === "instructor") window.location.href = "instructor.html";
+        else if (rol === "asistente") window.location.href = "asistente.html";
+        else window.location.href = "dashboard.html";
+
+    }, 1000);
 }
 
 </script>
